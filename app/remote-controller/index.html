@@ -1,2 +1,111 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=0.8, maximum-scale=0.8, user-scalable=yes"/><link href="index.min.css" rel="stylesheet" media="all"><script src="x0popup.min.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.0/jquery.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script><link href="x0popup.min.css" rel="stylesheet" media="all"></head><body><div class="row"><span><input class="clean-slide" id="device-id" type="text" tabindex=1 /><label for="device-id">设备ID</label><label for="device-id" id="save-device-id">确定</label></span></div><div><label class="switch-button"><input type="checkbox" id="switch"><span></span><span></span></label></div><div class="load-view" id="loading-box"><div class="load-an-view"><div class="wave"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div></div><div class="load-tip">LOADING</div></div><script>var device_id=""; var switch_on=false; $(()=>{ device_id=$.cookie("_TD_device_id"); $('#device-id').val(device_id); if(device_id){ $.get("https://cloud.arest.io/" + device_id + "/status",(data)=>{ console.log(data); $('#switch').get(0).checked=data.return_value; $("#loading-box").fadeOut(); if(!data.connected){ x0p('错误', '连接失败！', 'error');}})} else{ $('#device-id').focus();}}); $('#switch').click(()=>{ $("#loading-box").fadeIn(); console.log($(this).prop("checked")); $.get("https://cloud.arest.io/" + device_id + "/switch",success=(data)=>{ console.log(data); $('#switch').get(0).checked=data.return_value; $("#loading-box").fadeOut(); if(!data.connected){ x0p({ title:'错误', text:'连接失败！', animationType:'slideDown', icon:'error', buttons:[], autoClose:2000});}}); return false;}); $("#save-device-id").click(()=>{ $('#device-id').blur(); device_id=$('#device-id').val(); $.cookie("_TD_device_id",device_id); $.get("https://cloud.arest.io/" + device_id + "/status",(data)=>{ console.log(data); $('#switch').get(0).checked=data.return_value; $("#loading-box").fadeOut(); if(!data.connected){ x0p('错误', '连接失败！', 'error');}else{ x0p({ title:'成功', text:'连接成功', animationType:'slideDown', icon:'info', buttons:[], autoClose:1000});}});});
-</script></body></html>
+<!DOCTYPE html><html>
+<head><meta charset='UTF-8'>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=0.8, maximum-scale=0.8, user-scalable=yes"/>
+  <link href="index.min.css" rel="stylesheet" media="all">
+  <script src="x0popup.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.0/jquery.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <link href="x0popup.min.css" rel="stylesheet" media="all">
+</head>
+<body>
+<!-- 设备id输入部分开始 -->
+  <div class="row">
+    <span>
+    <input class="clean-slide" id="device-id" type="text" tabindex=1 />
+    <label for="device-id">设备ID</label>
+    <label for="device-id" id="save-device-id">确定</label>
+    </span>
+    </div>
+  <div>
+<!-- 设备id输入部分结束 -->
+<!-- 控制开关部分开始 -->
+  <label class="switch-button">
+    <input type="checkbox" id="switch">
+    <span></span>
+    <span></span>
+  </label>
+</div>
+<!-- 控制开关部分结束 -->
+<!-- 加载动画框开始 -->
+<div class="load-view" id="loading-box">
+  <div class="load-an-view">
+    <div class="wave">
+      <div class="rect1"></div>
+      <div class="rect2"></div>
+      <div class="rect3"></div>
+      <div class="rect4"></div>
+      <div class="rect5"></div>
+    </div>
+  </div>
+  <div class="load-tip">LOADING</div>
+</div>
+<!-- 加载动画框结束 -->
+<script>
+  var device_id = "";
+  var switch_on = false;
+  //初始化获取状态
+  $(function(){
+    device_id = $.cookie("_TD_device_id");
+    $('#device-id').val(device_id);
+    if(device_id){
+      $.get("https://cloud.arest.io/" + device_id + "/status",function(data){
+        console.log(data);
+        $('#switch').get(0).checked = data.return_value;
+        $("#loading-box").fadeOut();
+        if(!data.connected){
+          x0p('错误', '连接失败！', 'error')
+        }
+    })}
+    else{
+      $('#device-id').focus();
+    }
+  });
+  //开关切换
+  $('#switch').click(function(){
+    $("#loading-box").fadeIn();
+    console.log($(this).prop("checked"));
+    $.get("https://cloud.arest.io/" + device_id + "/switch",success=(data)=>{
+
+      console.log(data);
+      $('#switch').get(0).checked = data.return_value;
+      $("#loading-box").fadeOut();
+      if(!data.connected){
+        x0p({
+          title: '错误',
+          text: '连接失败！',
+          animationType: 'slideDown',
+          icon: 'error',
+          buttons: [],
+          autoClose: 2000
+          });
+      }
+    });
+    return false;
+  });
+  //保存设备ID
+  $("#save-device-id").click(()=>{
+    $('#device-id').blur();
+    device_id = $('#device-id').val();
+    $.cookie("_TD_device_id",device_id);
+      
+    $.get("https://cloud.arest.io/" + device_id + "/status",function(data){
+      console.log(data);
+      $('#switch').get(0).checked = data.return_value;
+      $("#loading-box").fadeOut();
+      if(!data.connected){
+        x0p('错误', '连接失败！', 'error');
+      }else{
+        x0p({
+          title: '成功',
+          text: '连接成功',
+          animationType: 'slideDown',
+          icon: 'info',
+          buttons: [],
+          autoClose: 1000
+          });
+      }
+      });
+  });
+</script>
+</body>
+</html>
