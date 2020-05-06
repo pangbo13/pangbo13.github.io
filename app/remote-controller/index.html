@@ -44,7 +44,7 @@
   var device_id = "";
   var switch_on = false;
   device_id = $.cookie("_TD_device_id");
-  if(device_id === undefined){
+  if(!device_id){
     device_id = "";
     $("#loading-box").fadeOut();
     }
@@ -74,7 +74,11 @@
   });
   //开关切换
   $('#switch').click(function(){
-    if(!device_id) return false;
+    if(!device_id){ 
+      $('#device-id').focus();
+      x0p('错误', '请输入设备ID！', 'info');
+      return false;
+      }
     this.disabled = true;
     setTimeout(()=>{this.disabled = false;},1000);
     $("#loading-box").fadeIn();
