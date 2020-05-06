@@ -1,7 +1,7 @@
 <!DOCTYPE html><html>
 <head><meta charset='UTF-8'>
   <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=0.8, maximum-scale=0.8, user-scalable=yes"/>
-  <link href="index.min.css" rel="stylesheet" media="all">
+  <link href="index.css" rel="stylesheet" media="all">
   <script src="x0popup.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.0/jquery.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
@@ -43,11 +43,15 @@
 <script>
   var device_id = "";
   var switch_on = false;
+  device_id = $.cookie("_TD_device_id");
+  if(device_id === undefined){
+    device_id = "";
+    $("#loading-box").fadeOut();
+    }
   //初始化获取状态
   $(function(){
-    device_id = $.cookie("_TD_device_id");
-    $('#device-id').val(device_id);
     if(device_id){
+      $('#device-id').val(device_id);
       $.get("https://cloud.arest.io/" + device_id + "/status",function(data){
         console.log(data);
         $('#switch').get(0).checked = data.return_value;
@@ -55,13 +59,24 @@
         if(!data.connected){
           x0p('错误', '连接失败！', 'error')
         }
-    })}
+    });
+    // setInterval(() => {
+    //   $('#switch').get(0).disabled = true;
+    //   $.get("https://cloud.arest.io/" + device_id + "/status",function(data){
+    //     console.log(data);
+    //     $('#switch').get(0).checked = data.return_value;})
+    //     $('#switch').get(0).disabled = false;
+    // }, 10000);
+  }
     else{
       $('#device-id').focus();
     }
   });
   //开关切换
   $('#switch').click(function(){
+    if(!device_id) return false;
+    this.disabled = true;
+    setTimeout(()=>{this.disabled = false;},1000);
     $("#loading-box").fadeIn();
     console.log($(this).prop("checked"));
     $.get("https://cloud.arest.io/" + device_id + "/switch",success=(data)=>{
@@ -84,8 +99,9 @@
   });
   //保存设备ID
   $("#save-device-id").click(()=>{
-    $('#device-id').blur();
+    
     device_id = $('#device-id').val();
+
     $.cookie("_TD_device_id",device_id);
       
     $.get("https://cloud.arest.io/" + device_id + "/status",function(data){
@@ -105,6 +121,11 @@
           });
       }
       });
+  });
+  $('#device-id').blur(function(){
+    setTimeout(()=>{
+    if(this.value != device_id) this.value = device_id;
+    },100);
   });
 </script>
 </body>
